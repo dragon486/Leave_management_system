@@ -1,8 +1,17 @@
+
+
+import Navbar from "./components/Navbar";
+import ApplyLeave from "./pages/ApplyLeave";
+import Dashboard from "./pages/dashboard";
+
+
 function App(){
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-blue-600">Leave Management System</h1>
-    </div>
+    <>
+      <Navbar/>
+      <Dashboard/>
+      <ApplyLeave/>
+    </>
   )
 }
 

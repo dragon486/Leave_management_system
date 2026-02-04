@@ -1,0 +1,129 @@
+/* Calendar container */
+.leave-calendar {
+  background: #0f0f0f;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+/* Toolbar */
+.fc-toolbar-title {
+  color: #ffffff;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+.fc-button {
+  background: #1a1a1a !important;
+  border: 1px solid #333 !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+}
+
+.fc-button:hover {
+  background: #2a2a2a !important;
+}
+
+/* Grid background */
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border: 1px solid #2a2a2a;
+}
+
+.fc-daygrid-day {
+  background: #111;
+  transition: background 0.2s ease;
+}
+
+/* Hover effect */
+.fc-daygrid-day:hover {
+  background: #1c1c1c;
+}
+
+/* Day numbers */
+.fc-daygrid-day-number {
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+/* Today highlight */
+.fc-day-today {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-radius: 6px;
+}
+
+/* Events (leave blocks) */
+.fc-event {
+  background: #ffffff !important;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none !important;
+  cursor: pointer;
+}
+
+/* Event text (IMPORTANT FIX) */
+.fc-event-title,
+.fc-event-time {
+  color: #000000 !important;
+}
+
+/* Event hover */
+.fc-event:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.45);
+  transition: all 0.2s ease;
+}
+
+
+/* Header row */
+.fc-col-header-cell {
+  background: #0f0f0f;
+}
+
+.fc-col-header-cell-cushion {
+  color: #aaa;
+  font-weight: 500;
+}
+
+.leave-sick {
+  background: #ff4d4d !important;
+  color: #fff !important;
+}
+
+.leave-casual {
+  background: #4da6ff !important;
+  color: #fff !important;
+}
+
+.leave-approved {
+  background: #4dff88 !important;
+  color: #000 !important;
+}
+
+/*making border curvy*/
+.leave-calendar {
+  background: #0f0f0f;
+  padding: 20px;
+  border-radius: 24px;
+  overflow: hidden; 
+  transition: all 0.3s ease;
+}
+
+.fc {
+  border-radius: 24px;
+}
+
+.fc-scrollgrid {
+  border-radius: 20px;
+  overflow: hidden;
+}
+/*Hover effect for the entire calendar*/
+.leave-calendar:hover {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 0 30px rgba(255, 255, 255, 0.15),
+    0 0 60px rgba(255, 255, 255, 0.08);
+}
