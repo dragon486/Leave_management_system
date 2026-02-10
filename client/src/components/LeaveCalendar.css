@@ -98,9 +98,29 @@
   color: #fff !important;
 }
 
-.leave-approved {
-  background: #4dff88 !important;
+/* Leave Status Colors */
+.leave-pending {
+  background: #f59e0b !important; /* amber-500 */
   color: #000 !important;
+}
+
+.leave-approved {
+  background: #10b981 !important; /* emerald-500 */
+  color: #fff !important;
+}
+
+.leave-rejected {
+  background: #ef4444 !important; /* red-500 */
+  color: #fff !important;
+}
+
+.leave-cancelled {
+  background: #6b7280 !important; /* gray-500 */
+  color: #fff !important;
+}
+
+.fc-event-title {
+  color: inherit !important;
 }
 
 /*making border curvy*/
