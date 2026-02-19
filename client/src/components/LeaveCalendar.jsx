@@ -17,7 +17,7 @@ function LeaveCalendar() {
           title: `${leave.leaveType.toUpperCase()} - ${leave.status}`,
           start: leave.startDate,
           end: leave.endDate,
-          className: `leave-${leave.status}`,
+          className: `leave-${leave.status} ${leave.status === 'rejected' ? 'cursor-pointer' : ''}`,
           extendedProps: { ...leave }
         }));
         setEvents(formattedEvents);
@@ -89,6 +89,13 @@ function LeaveCalendar() {
               )}
             </div>
           );
+        }}
+        eventClick={(info) => {
+          if (info.event.extendedProps.status === 'rejected' && info.event.extendedProps.adminComment) {
+            alert(`Rejection Reason: ${info.event.extendedProps.adminComment}`);
+          } else if (info.event.extendedProps.status === 'rejected') {
+            alert('Leave rejected. No specific reason provided by admin.');
+          }
         }}
         headerToolbar={{
           left: 'prev,next today',

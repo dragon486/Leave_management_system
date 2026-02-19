@@ -2,10 +2,12 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const { initCronJobs } = require('./utils/cronJobs');
 
 // Route imports
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const leaveRoutes = require('./routes/leaveRoutes');
 
 // Load env vars
 dotenv.config();
@@ -26,6 +28,7 @@ app.use(express.urlencoded({ extended: false }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/leaves', leaveRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

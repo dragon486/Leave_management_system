@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/dashboard";
+import ApplyLeave from "./pages/ApplyLeave";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
@@ -26,6 +27,16 @@ function App() {
               }
             />
 
+
+
+            <Route
+              path="/apply-leave"
+              element={
+                <ProtectedRoute>
+                  <ApplyLeave />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Catch-all Redirect */}
             <Route path="*" element={<Navigate to="/" />} />
