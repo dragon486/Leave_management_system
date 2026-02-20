@@ -7,8 +7,7 @@ const Register = () => {
         name: '',
         email: '',
         password: '',
-        department: '',
-        role: 'user'
+        department: ''
     });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -103,18 +102,7 @@ const Register = () => {
                             />
                         </div>
 
-                        <div>
-                            <label className="block text-gray-400 text-sm font-medium mb-1.5 ml-1">Account Type</label>
-                            <select
-                                name="role"
-                                value={formData.role}
-                                onChange={handleChange}
-                                className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-white/20 transition-all font-sans"
-                            >
-                                <option value="user">Employee</option>
-                                <option value="admin">Manager / Admin</option>
-                            </select>
-                        </div>
+
 
                         <button
                             type="submit"

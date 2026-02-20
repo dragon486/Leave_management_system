@@ -5,32 +5,8 @@ const User = require('../models/User');
 // @access  Private (Admin)
 const getAllUsers = async (req, res) => {
     try {
-        const { role, department, isActive, page = 1, limit = 10 } = req.query;
-
-        let query = {};
-
-        // Apply filters
-        if (role) query.role = role;
-        if (department) query.department = department;
-        if (isActive !== undefined) query.isActive = isActive === 'true';
-
-        // Pagination
-        const skip = (page - 1) * limit;
-
-        const users = await User.find(query)
-            .select('-password')
-            .sort({ joinDate: -1 })
-            .skip(skip)
-            .limit(parseInt(limit));
-
-        const total = await User.countDocuments(query);
-
-        res.json({
-            users,
-            currentPage: parseInt(page),
-            totalPages: Math.ceil(total / limit),
-            totalUsers: total
-        });
+        const users = await User.find({}).select('-password');
+        res.json(users);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -42,12 +18,11 @@ const getAllUsers = async (req, res) => {
 const getUserById = async (req, res) => {
     try {
         const user = await User.findById(req.params.id).select('-password');
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404).json({ message: 'User not found' });
         }
-
-        res.json(user);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -60,88 +35,136 @@ const updateUser = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
+        if (user) {
+            user.name = req.body.name || user.name;
+            user.email = req.body.email || user.email;
+            user.role = req.body.role || user.role;
+            user.department = req.body.department || user.department;
 
-        // Update fields
-        user.name = req.body.name || user.name;
-        user.email = req.body.email || user.email;
-        user.department = req.body.department || user.department;
-        user.role = req.body.role || user.role;
-
-        if (req.body.isActive !== undefined) {
-            user.isActive = req.body.isActive;
-        }
-
-        const updatedUser = await user.save();
-
-        res.json({
-            message: 'User updated successfully',
-            user: {
+            const updatedUser = await user.save();
+            res.json({
                 _id: updatedUser._id,
                 name: updatedUser.name,
                 email: updatedUser.email,
                 role: updatedUser.role,
-                department: updatedUser.department,
-                leaveBalance: updatedUser.leaveBalance,
-                isActive: updatedUser.isActive
-            }
-        });
+                department: updatedUser.department
+            });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-// @desc    Delete user (soft delete)
+// @desc    Delete user
 // @route   DELETE /api/users/:id
 // @access  Private (Admin)
 const deleteUser = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+        if (user) {
+            await user.deleteOne();
+            res.json({ message: 'User removed' });
+        } else {
+            res.status(404).json({ message: 'User not found' });
         }
-
-        // Prevent deleting yourself
-        if (user._id.toString() === req.user._id.toString()) {
-            return res.status(400).json({ message: 'Cannot delete your own account' });
-        }
-
-        // Soft delete - just deactivate
-        user.isActive = false;
-        await user.save();
-
-        res.json({ message: 'User deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-// @desc    Update user leave balance
+// @desc    Update leave balance
 // @route   PUT /api/users/:id/leave-balance
 // @access  Private (Admin)
 const updateLeaveBalance = async (req, res) => {
     try {
-        const { sick, casual, vacation } = req.body;
+        const user = await User.findById(req.params.id);
+
+        if (user) {
+            user.leaveBalance = req.body.leaveBalance || user.leaveBalance;
+            const updatedUser = await user.save();
+            res.json(updatedUser);
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Request admin access
+// @route   POST /api/users/request-admin
+// @access  Private
+const requestAdmin = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+
+        if (user) {
+            // Check for cooldown (e.g., 7 days)
+            if (user.adminRequestDate) {
+                const now = new Date();
+                const lastRequest = new Date(user.adminRequestDate);
+                const diffTime = Math.abs(now - lastRequest);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                const cooldownDays = 7;
+
+                if (diffDays < cooldownDays) {
+                    return res.status(400).json({
+                        message: `You can only request admin access once every ${cooldownDays} days. Please wait ${cooldownDays - diffDays} more days.`
+                    });
+                }
+            }
+
+            user.adminRequestStatus = 'pending';
+            user.adminRequestReason = req.body.reason || '';
+            user.adminRequestDate = Date.now();
+            await user.save();
+            res.json({ message: 'Admin access request submitted' });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @desc    Handle admin request (approve/reject)
+// @route   PUT /api/users/:id/handle-admin-request
+// @access  Private (Admin)
+const handleAdminRequest = async (req, res) => {
+    try {
+        const { status } = req.body; // 'approved' or 'rejected'
         const user = await User.findById(req.params.id);
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Update leave balance
-        if (sick !== undefined) user.leaveBalance.sick = sick;
-        if (casual !== undefined) user.leaveBalance.casual = casual;
-        if (vacation !== undefined) user.leaveBalance.vacation = vacation;
+        if (status === 'approved') {
+            user.role = 'admin';
+            user.adminRequestStatus = 'approved';
+        } else if (status === 'rejected') {
+            user.adminRequestStatus = 'rejected';
+        } else {
+            return res.status(400).json({ message: 'Invalid status' });
+        }
 
         await user.save();
+        res.json({ message: `Request ${status}`, user });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
-        res.json({
-            message: 'Leave balance updated successfully',
-            leaveBalance: user.leaveBalance
-        });
+// @desc    Get pending admin requests
+// @route   GET /api/users/admin-requests
+// @access  Private (Admin)
+const getAdminRequests = async (req, res) => {
+    try {
+        const users = await User.find({ adminRequestStatus: 'pending' }).select('-password');
+        res.json(users);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -152,5 +175,8 @@ module.exports = {
     getUserById,
     updateUser,
     deleteUser,
-    updateLeaveBalance
+    updateLeaveBalance,
+    requestAdmin,
+    handleAdminRequest,
+    getAdminRequests
 };

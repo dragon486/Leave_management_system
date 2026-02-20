@@ -5,12 +5,20 @@ const {
     getUserById,
     updateUser,
     deleteUser,
-    updateLeaveBalance
+    updateLeaveBalance,
+    requestAdmin,
+    handleAdminRequest,
+    getAdminRequests
 } = require('../controllers/userController');
 const { protect, admin } = require('../middleware/auth');
 
-// All routes are admin only
+// Request Admin Access (User)
+router.post('/request-admin', protect, requestAdmin);
+
+// Admin Routes
 router.get('/', protect, admin, getAllUsers);
+router.get('/admin-requests', protect, admin, getAdminRequests); // Check requests
+router.put('/:id/handle-admin-request', protect, admin, handleAdminRequest); // Handle request
 router.get('/:id', protect, admin, getUserById);
 router.put('/:id', protect, admin, updateUser);
 router.delete('/:id', protect, admin, deleteUser);

@@ -50,6 +50,18 @@ const userSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
+    },
+    adminRequestStatus: {
+        type: String,
+        enum: ['none', 'pending', 'approved', 'rejected'],
+        default: 'none'
+    },
+    adminRequestReason: {
+        type: String,
+        maxlength: 500
+    },
+    adminRequestDate: {
+        type: Date
     }
 }, {
     timestamps: true

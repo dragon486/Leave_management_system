@@ -1,0 +1,123 @@
+LEAVE MANAGEMENT SYSTEM - COMPLETE PROJECT DOCUMENTATION & REPORT
+
+================================================================================
+1. EXECUTIVE SUMMARY
+================================================================================
+The Leave Management System is a professional, full-stack enterprise application 
+designed to automate and manage employee leave workflows. This report details 
+the system's architecture, comprehensive technical specifications, and the 
+cumulative development history of features and fixes implemented to date.
+
+================================================================================
+2. CUMULATIVE DEVELOPMENT HISTORY ("WHAT WE DID")
+================================================================================
+
+CORE INFRASTRUCTURE & REFACTORING
+---------------------------------
+* Project Standardization: Refactored the entire project structure to adhere 
+  to professional standards, including strict typing, component modularization, 
+  and a comprehensive security audit of all API routes.
+* Security Audit: Conducted a thorough review of the back-end to ensure all 
+  sensitive endpoints (Leaves, Admin controls) are protected by JWT and 
+  role-based middleware.
+
+FEATURE IMPLEMENTATIONS
+-----------------------
+* Admin Request Cooldown: Implemented a critical business logic rule: a 
+  7-day cooldown period between admin role requests to prevent system spam.
+* Intelligent Leave Logic: 
+    - Automated leave balance verification prior to submission.
+    - Real-time overlap detection to prevent employees from booking multiple 
+      leaves on the same dates.
+* Professional Dashboard: Designed a high-density, dynamic dashboard allowing 
+  for free-form widget placement and resizing, similar to premium analytics 
+  platforms.
+* Enhanced Calendar & Notifications:
+    - Integrated FullCalendar with precise time-of-day leave display.
+    - Automated Nodemailer integration to send status updates (Approved/Rejected) 
+      to employee emails.
+* Administrative Tools: Created a CLI utility (reset_password_cli.js) for 
+  system administrators to manage user credentials directly from the server 
+  terminal.
+
+UI/UX & DESIGN EVOLUTION
+------------------------
+* Brand Identity: Implemented a "Pure Monochrome Black" aesthetic with 
+  "Retro Atomic" neon accents, modern typography (Inter/Outfit), and smooth 
+  glassmorphism effects.
+* Responsive Design: Standardized all layouts to be fully responsive across 
+  mobile, tablet, and desktop viewports.
+* Design System: Established a consistent color palette, spacing tokens, 
+  and reusable component library (Buttons, Modals, Inputs).
+
+RELIABILITY & COMPATIBILITY FIXES
+---------------------------------
+* Cross-Platform Synchronization: Resolved major CSS and layout discrepancies 
+  between Windows and MacOS environments.
+* Connectivity Resolution: Debugged and fixed network reachability issues 
+  (Connection Refused errors) between the Vite frontend and Express backend.
+* Functional Accuracy: Fixed currency calculation bugs in financial modules 
+  to ensure accurate budget projection and cost reporting.
+
+================================================================================
+3. TECHNOLOGY STACK
+================================================================================
+
+FRONTEND
+- Framework: React 19 (Vite)
+- State: AuthContext (Context API)
+- Styling: Tailwind CSS (Custom Theme)
+- Visuals: Lottie (Animations), FullCalendar (Interactive Scheduling)
+- API: Axios with Interceptors
+
+BACKEND
+- Framework: Node.js / Express.js
+- Database: MongoDB (via Mongoose ODM)
+- Auth: JWT (Stateless) + BcryptJS
+- Logic: Node-cron (Scheduled accruals), Express Validator (Input Sanitization)
+- Mail: Nodemailer
+
+================================================================================
+4. FULL API REFERENCE
+================================================================================
+
+AUTHENTICATION (/api/auth)
+- POST /register: Public registration.
+- POST /login: Secure authentication.
+- GET /profile: Fetch authenticated user state.
+- PUT /profile: Update user specific metadata.
+
+LEAVE OPERATIONS (/api/leaves)
+- POST /apply: Submit leave (Logic: Balance check + Overlap guard).
+- GET /my-leaves: User history.
+- PUT /:id/cancel: Withdraw pending requests.
+- GET /balance: Real-time day counters.
+- GET /all: (Admin) Global overview.
+- PUT /:id/status: (Admin) Approval/Rejection workflow.
+- GET /statistics: (Admin) High-level system metrics.
+
+USER & ADMIN MANAGEMENT (/api/users)
+- POST /request-admin: Initiates 7-day cooldown logic.
+- GET /admin-requests: (Admin) Pending role elevations.
+- PUT /:id/handle-admin-request: (Admin) Promote/Demote logic.
+- PUT /:id/leave-balance: (Admin) Manual balance overrides.
+
+================================================================================
+5. SECURITY & BUSINESS RULES
+================================================================================
+1. RBAC: Multi-layered middleware ensures User vs Admin separation.
+2. Stateless Auth: JWTs are used for all protected interactions, avoiding 
+   server-side session overhead.
+3. Data Integrity: All dates are handled as UTC objects to prevent time-zone 
+   shifts in leave reporting.
+4. Acquiescence: Leaves are automatically accrued/reset via server-side 
+   cron jobs.
+
+================================================================================
+6. PROJECT ROADMAP & SETUP
+================================================================================
+1. Installation: Run 'npm install' in both client/ and server/ root.
+2. Environment: Ensure .env contains MONGO_URI, JWT_SECRET, and CLIENT_URL.
+3. Execution:
+    - Backend: npm start (or npm run dev)
+    - Frontend: npm run dev

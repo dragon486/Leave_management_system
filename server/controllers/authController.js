@@ -28,7 +28,9 @@ const register = async (req, res) => {
             email,
             password,
             department,
-            role: role || 'user' // Default to 'user' if not specified
+            password,
+            department,
+            role: 'user' // Force 'user' role, ignoring request body
         });
 
         if (user) {
@@ -39,6 +41,8 @@ const register = async (req, res) => {
                 role: user.role,
                 department: user.department,
                 leaveBalance: user.leaveBalance,
+                adminRequestStatus: user.adminRequestStatus,
+                adminRequestDate: user.adminRequestDate,
                 token: generateToken(user._id)
             });
         } else {
@@ -82,6 +86,8 @@ const login = async (req, res) => {
             role: user.role,
             department: user.department,
             leaveBalance: user.leaveBalance,
+            adminRequestStatus: user.adminRequestStatus,
+            adminRequestDate: user.adminRequestDate,
             token: generateToken(user._id)
         });
     } catch (error) {
@@ -104,6 +110,8 @@ const getProfile = async (req, res) => {
                 role: user.role,
                 department: user.department,
                 leaveBalance: user.leaveBalance,
+                adminRequestStatus: user.adminRequestStatus,
+                adminRequestDate: user.adminRequestDate,
                 joinDate: user.joinDate,
                 isActive: user.isActive
             });
@@ -140,6 +148,8 @@ const updateProfile = async (req, res) => {
                 role: updatedUser.role,
                 department: updatedUser.department,
                 leaveBalance: updatedUser.leaveBalance,
+                adminRequestStatus: updatedUser.adminRequestStatus,
+                adminRequestDate: updatedUser.adminRequestDate,
                 token: generateToken(updatedUser._id)
             });
         } else {
