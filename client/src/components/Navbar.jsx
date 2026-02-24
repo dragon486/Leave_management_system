@@ -41,7 +41,7 @@ function Navbar() {
                                         const reason = window.prompt('Why do you want to become an admin?');
                                         if (reason !== null) { // If not cancelled
                                             try {
-                                                await axios.post('/users/request-admin', { reason });
+                                                await axios.post('users/request-admin', { reason });
                                                 alert('Admin access requested successfully');
                                                 window.location.reload();
                                             } catch (error) {

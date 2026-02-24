@@ -12,7 +12,7 @@ function LeaveCalendar() {
   useEffect(() => {
     const fetchLeaves = async () => {
       try {
-        const { data } = await axios.get("/leaves/my-leaves");
+        const { data } = await axios.get("leaves/my-leaves");
         const formattedEvents = data.leaves.map((leave) => ({
           title: `${leave.leaveType.toUpperCase()} - ${leave.status}`,
           start: leave.startDate,

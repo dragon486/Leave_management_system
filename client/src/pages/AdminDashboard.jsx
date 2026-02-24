@@ -17,9 +17,9 @@ const AdminDashboard = () => {
         setLoading(true);
         try {
             const [leavesRes, statsRes, requestsRes] = await Promise.all([
-                axios.get('/leaves/all?limit=50'),
-                axios.get('/leaves/statistics'),
-                axios.get('/users/admin-requests')
+                axios.get('leaves/all?limit=50'),
+                axios.get('leaves/statistics'),
+                axios.get('users/admin-requests')
             ]);
             setLeaves(leavesRes.data.leaves);
             setStats(statsRes.data);
@@ -40,11 +40,11 @@ const AdminDashboard = () => {
 
         setProcessingId(id);
         try {
-            await axios.put(`/leaves/${id}/status`, { status, adminComment });
+            await axios.put(`leaves/${id}/status`, { status, adminComment });
             // Update local state
             setLeaves(leaves.map(l => l._id === id ? { ...l, status, adminComment } : l));
             // Refresh stats
-            const statsRes = await axios.get('/leaves/statistics');
+            const statsRes = await axios.get('leaves/statistics');
             setStats(statsRes.data);
         } catch (error) {
             alert(error.response?.data?.message || 'Action failed');
@@ -58,7 +58,7 @@ const AdminDashboard = () => {
 
         setProcessingId(userId);
         try {
-            await axios.put(`/users/${userId}/handle-admin-request`, { status });
+            await axios.put(`users/${userId}/handle-admin-request`, { status });
             // Remove from list
             setAdminRequests(adminRequests.filter(u => u._id !== userId));
             alert(`Request ${status}`);

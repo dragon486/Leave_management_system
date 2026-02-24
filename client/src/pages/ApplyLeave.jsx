@@ -23,7 +23,7 @@ const ApplyLeave = () => {
         setError('');
 
         try {
-            await axios.post('/leaves/apply', formData);
+            await axios.post('leaves/apply', formData);
             alert('Leave application submitted successfully');
             navigate('/');
         } catch (err) {
