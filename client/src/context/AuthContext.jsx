@@ -12,9 +12,19 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [token, setToken] = useState(localStorage.getItem('token'));
 
-    // Set axios default base URL
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-    axios.defaults.baseURL = apiUrl.endsWith('/') ? apiUrl : `${apiUrl}/`;
+    // Set axios default base URL (Self-healing logic for production)
+    let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+    // If the URL exists but doesn't have /api, add it automatically
+    if (apiUrl && !apiUrl.toLowerCase().includes('/api')) {
+        apiUrl = apiUrl.endsWith('/') ? `${apiUrl}api/` : `${apiUrl}/api/`;
+    } else {
+        // Ensure it ends with a slash so relative paths like 'auth/login' work
+        apiUrl = apiUrl.endsWith('/') ? apiUrl : `${apiUrl}/`;
+    }
+
+    axios.defaults.baseURL = apiUrl;
+    console.log("System Status: API connected to", apiUrl);
 
     useEffect(() => {
         if (token) {
