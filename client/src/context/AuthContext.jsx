@@ -10,7 +10,7 @@ export { useAuth };
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [token, setToken] = useState(localStorage.getItem('token'));
+    const [token, setToken] = useState(sessionStorage.getItem('token'));
 
     // Set axios default base URL (Self-healing logic for production)
     let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (email, password) => {
         const { data } = await axios.post('auth/login', { email, password });
-        localStorage.setItem('token', data.token);
+        sessionStorage.setItem('token', data.token);
         setToken(data.token);
         setUser(data);
         return data;
@@ -57,14 +57,14 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (userData) => {
         const { data } = await axios.post('auth/register', userData);
-        localStorage.setItem('token', data.token);
+        sessionStorage.setItem('token', data.token);
         setToken(data.token);
         setUser(data);
         return data;
     };
 
     const logout = () => {
-        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
         setToken(null);
         setUser(null);
         delete axios.defaults.headers.common['Authorization'];
