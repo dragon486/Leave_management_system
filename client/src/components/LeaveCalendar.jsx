@@ -9,12 +9,19 @@ function LeaveCalendar() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const formatDays = (days) => {
+    const d = parseFloat(days);
+    if (isNaN(d)) return 0;
+    // Round to whole numbers (integers)
+    return Math.round(d);
+  };
+
   useEffect(() => {
     const fetchLeaves = async () => {
       try {
         const { data } = await axios.get("leaves/my-leaves");
         const formattedEvents = data.leaves.map((leave) => ({
-          title: `${leave.leaveType.toUpperCase()} - ${leave.status}`,
+          title: `${leave.leaveType.toUpperCase()} (${formatDays(leave.totalDays)}d) - ${leave.status}`,
           start: leave.startDate,
           end: leave.endDate,
           className: `leave-${leave.status} ${leave.status === 'rejected' ? 'cursor-pointer' : ''}`,

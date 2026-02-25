@@ -1,5 +1,6 @@
 const Leave = require('../models/leave');
 const User = require('../models/User');
+const AuditLog = require('../models/AuditLog');
 
 // ============== USER FUNCTIONS ==============
 
@@ -22,8 +23,8 @@ const applyLeave = async (req, res) => {
             return res.status(400).json({ message: 'End date must be after start date' });
         }
 
-        // Convert to days (1 day = 24*60*60*1000 ms) and round to 2 decimal places
-        const totalDays = Math.round((diffMs / (1000 * 60 * 60 * 24)) * 100) / 100;
+        // Convert to days (1 day = 24*60*60*1000 ms) and round to whole numbers as per user's preference
+        const totalDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
 
         // Check if user has enough leave balance
         const user = await User.findById(req.user._id);
@@ -240,6 +241,15 @@ const updateLeaveStatus = async (req, res) => {
 
         await leave.save();
 
+        // Create audit log
+        await AuditLog.create({
+            action: status,
+            adminId: req.user._id,
+            employeeId: leave.userId,
+            leaveId: leave._id,
+            details: `Leave ${status} by admin. Comment: ${adminComment || 'None'}`
+        });
+
         // Send email notification
         await sendLeaveStatusEmail(leave.userId, leave);
 
@@ -323,6 +333,24 @@ const getUserLeaves = async (req, res) => {
     }
 };
 
+// @desc    Get all audit logs
+// @route   GET /api/leaves/audit-logs
+// @access  Private (Admin)
+const getAuditLogs = async (req, res) => {
+    try {
+        const logs = await AuditLog.find()
+            .populate('adminId', 'name email')
+            .populate('employeeId', 'name email')
+            .populate('leaveId')
+            .sort({ createdAt: -1 })
+            .limit(100);
+
+        res.json(logs);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     // User functions
     applyLeave,
@@ -333,5 +361,6 @@ module.exports = {
     getAllLeaves,
     updateLeaveStatus,
     getLeaveStatistics,
-    getUserLeaves
+    getUserLeaves,
+    getAuditLogs
 };

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 
@@ -6,6 +6,8 @@ function Navbar() {
     const { user, logout } = useAuth();
     // Ensure user object has latest status (might need a refresh mechanism or check context)
     const navigate = useNavigate();
+    const location = useLocation();
+    const isAdminRoute = location.pathname.startsWith('/admin');
 
     const handleLogout = () => {
         logout();
@@ -21,17 +23,22 @@ function Navbar() {
             <div className="flex items-center gap-6">
                 {user ? (
                     <>
-                        <Link to="/" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                            Dashboard
-                        </Link>
+                        {/* USER ONLY LINKS */}
+                        {user.role === 'user' && (
+                            <>
+                                <Link to="/" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                                    Dashboard
+                                </Link>
+                                <Link to="/apply-leave" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
+                                    Apply Leave
+                                </Link>
+                            </>
+                        )}
+
+                        {/* ADMIN ONLY LINKS */}
                         {user.role === 'admin' && (
                             <Link to="/admin" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
                                 Admin Panel
-                            </Link>
-                        )}
-                        {user.role === 'user' && (
-                            <Link to="/apply-leave" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">
-                                Apply Leave
                             </Link>
                         )}
                         <div className="flex items-center gap-4 ml-4 pl-4 border-l border-white/20">

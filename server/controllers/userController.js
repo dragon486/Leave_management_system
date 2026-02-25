@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const AuditLog = require('../models/AuditLog');
 
 // @desc    Get all users
 // @route   GET /api/users
@@ -152,6 +153,15 @@ const handleAdminRequest = async (req, res) => {
         }
 
         await user.save();
+
+        // Create audit log
+        await AuditLog.create({
+            action: status === 'approved' ? 'admin_request_approved' : 'admin_request_rejected',
+            adminId: req.user._id,
+            employeeId: user._id,
+            details: `Admin access request ${status} for ${user.email}.`
+        });
+
         res.json({ message: `Request ${status}`, user });
     } catch (error) {
         res.status(500).json({ message: error.message });

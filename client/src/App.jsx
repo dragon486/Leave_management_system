@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminRoute from './components/AdminRoute';
 import ApplyLeave from "./pages/ApplyLeave";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -30,9 +31,9 @@ function App() {
             <Route
               path="/admin"
               element={
-                <ProtectedRoute>
+                <AdminRoute>
                   <AdminDashboard />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
 

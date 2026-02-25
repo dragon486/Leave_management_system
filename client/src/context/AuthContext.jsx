@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(sessionStorage.getItem('token'));
 
     // Set axios default base URL (Self-healing logic for production)
-    let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
     // If the URL exists but doesn't have /api, add it automatically
     if (apiUrl && !apiUrl.toLowerCase().includes('/api')) {

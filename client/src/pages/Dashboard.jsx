@@ -7,7 +7,7 @@ function Dashboard() {
 
   return (
     <div style={{ padding: "40px", background: "#000", minHeight: "100vh" }}>
-      {user?.role === 'admin' ? <AdminDashboard /> : <LeaveCalendar />}
+      <LeaveCalendar />
     </div>
   );
 }
