@@ -23,7 +23,6 @@ The **Leave Management System (LMS)** is a high-performance, full-stack enterpri
 - **Global Overview**: Comprehensive visibility into all employee leave requests.
 - **One-Click Approval**: Streamlined workflow for approving or rejecting requests.
 - **Admin Cooldown Logic**: Built-in 7-day cooldown for admin role requests to prevent system spam.
-- **CLI Utility**: Dedicated server-side command-line tool for secure password resets.
 
 ---
 

@@ -103,6 +103,9 @@ const ApplyLeave = () => {
         }
     };
 
+    // Calculate minimum datetime for inputs to block past dates
+    const minDateTime = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+
     return (
         <div className="min-h-screen bg-black p-8 text-white">
             <div className="max-w-2xl mx-auto bg-[#0f0f0f] p-8 rounded-2xl border border-white/5">
@@ -142,6 +145,7 @@ const ApplyLeave = () => {
                                 name="startDate"
                                 value={formData.startDate}
                                 onChange={handleChange}
+                                min={minDateTime}
                                 className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-white/20"
                                 required
                             />
@@ -153,6 +157,7 @@ const ApplyLeave = () => {
                                 name="endDate"
                                 value={formData.endDate}
                                 onChange={handleChange}
+                                min={minDateTime}
                                 className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-white/20"
                                 required
                             />

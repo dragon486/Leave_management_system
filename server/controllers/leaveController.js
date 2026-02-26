@@ -15,6 +15,13 @@ const applyLeave = async (req, res) => {
         const start = new Date(startDate);
         const end = new Date(endDate);
 
+        // Check if start date is in the past
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Ignore exact hours to allow today's date
+        if (start < today) {
+            return res.status(400).json({ message: 'Leave cannot be applied in previous dates' });
+        }
+
         // Calculate difference in milliseconds
         const diffMs = end - start;
 
@@ -26,13 +33,25 @@ const applyLeave = async (req, res) => {
         // Convert to days (1 day = 24*60*60*1000 ms) and round to whole numbers as per user's preference
         const totalDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
 
-        // Check if user has enough leave balance
+        // Check if user has enough leave balance (Base Balance - Currently Pending)
         const user = await User.findById(req.user._id);
 
+        // Fetch all pending leaves of the requested type
+        const pendingLeaves = await Leave.find({
+            userId: req.user._id,
+            leaveType: leaveType,
+            status: 'pending'
+        });
 
-        if (user.leaveBalance[leaveType] < totalDays) {
+        // Sum the total days tied up in pending requests
+        const pendingSum = pendingLeaves.reduce((sum, leave) => sum + leave.totalDays, 0);
+
+        // Calculate the true remaining balance
+        const validRemainingBalance = user.leaveBalance[leaveType] - pendingSum;
+
+        if (validRemainingBalance < totalDays) {
             return res.status(400).json({
-                message: `Insufficient ${leaveType} leave balance. Available: ${user.leaveBalance[leaveType]} days, Requested: ${totalDays} days`
+                message: `Insufficient ${leaveType} leave balance. Available: ${validRemainingBalance} days (Total remaining ${user.leaveBalance[leaveType]} - ${pendingSum} currently pending), Requested: ${totalDays} days`
             });
         }
 
