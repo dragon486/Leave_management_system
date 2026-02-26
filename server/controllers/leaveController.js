@@ -43,15 +43,22 @@ const applyLeave = async (req, res) => {
             status: 'pending'
         });
 
-        // Sum the total days tied up in pending requests
-        const pendingSum = pendingLeaves.reduce((sum, leave) => sum + leave.totalDays, 0);
+        // Sum the total days tied up in pending requests (safeguard against NaN from legacy dirty data)
+        const pendingSum = pendingLeaves.reduce((sum, leave) => {
+            const days = Number(leave.totalDays);
+            return sum + (isNaN(days) ? 0 : days);
+        }, 0);
+
+        // Safely parse the DB balance
+        const baseBalance = Number(user.leaveBalance[leaveType]);
+        const safeBaseBalance = isNaN(baseBalance) ? 0 : baseBalance;
 
         // Calculate the true remaining balance
-        const validRemainingBalance = user.leaveBalance[leaveType] - pendingSum;
+        const validRemainingBalance = safeBaseBalance - pendingSum;
 
         if (validRemainingBalance < totalDays) {
             return res.status(400).json({
-                message: `Insufficient ${leaveType} leave balance. Available: ${validRemainingBalance} days (Total remaining ${user.leaveBalance[leaveType]} - ${pendingSum} currently pending), Requested: ${totalDays} days`
+                message: `Insufficient ${leaveType} leave balance. Available: ${validRemainingBalance} days (Total remaining ${safeBaseBalance} - ${pendingSum} currently pending), Requested: ${totalDays} days`
             });
         }
 
