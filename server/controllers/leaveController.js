@@ -63,7 +63,7 @@ const applyLeave = async (req, res) => {
             const displayPending = Math.round(pendingSum);
 
             return res.status(400).json({
-                message: `Insufficient ${leaveType} leave balance. Available: ${displayAvailable} days (Total limit: ${displayBase} days - ${displayPending} pending), Requested: ${totalDays} days`
+                message: `Insufficient ${leaveType} leave. You have ${displayAvailable} days available (${displayBase} total limit - ${displayPending} currently pending), but requested ${totalDays} days.`
             });
         }
 
