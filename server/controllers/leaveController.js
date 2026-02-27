@@ -58,8 +58,8 @@ const applyLeave = async (req, res) => {
 
         if (validRemainingBalance < totalDays) {
             // For the user-facing error message, let's make sure things look professional (no floats or negative numbers)
-            const displayAvailable = Math.max(0, validRemainingBalance);
-            const displayBase = Math.max(0, Math.round(safeBaseBalance));
+            const displayAvailable = Math.round(Math.max(0, validRemainingBalance));
+            const displayBase = Math.round(Math.max(0, Math.round(safeBaseBalance)));
             const displayPending = Math.round(pendingSum);
 
             return res.status(400).json({
