@@ -53,12 +53,17 @@ const applyLeave = async (req, res) => {
         const baseBalance = Number(user.leaveBalance[leaveType]);
         const safeBaseBalance = isNaN(baseBalance) ? 0 : baseBalance;
 
-        // Calculate the true remaining balance
-        const validRemainingBalance = safeBaseBalance - pendingSum;
+        // Calculate the true remaining balance natively, but round it for comparison
+        const validRemainingBalance = Math.round(safeBaseBalance - pendingSum);
 
         if (validRemainingBalance < totalDays) {
+            // For the user-facing error message, let's make sure things look professional (no floats or negative numbers)
+            const displayAvailable = Math.max(0, validRemainingBalance);
+            const displayBase = Math.max(0, Math.round(safeBaseBalance));
+            const displayPending = Math.round(pendingSum);
+
             return res.status(400).json({
-                message: `Insufficient ${leaveType} leave balance. Available: ${validRemainingBalance} days (Total remaining ${safeBaseBalance} - ${pendingSum} currently pending), Requested: ${totalDays} days`
+                message: `Insufficient ${leaveType} leave balance. Available: ${displayAvailable} days (Total limit: ${displayBase} days - ${displayPending} pending), Requested: ${totalDays} days`
             });
         }
 
